@@ -118,6 +118,9 @@
             font-weight: bold;
             cursor: pointer;
         }
+        ul{
+            margin-left: opx;
+        }
     </style>
     <script>
         function toggleMenu(section) {
@@ -152,7 +155,6 @@
                 "Vegetariano": "vegetariano.png",
                 "Vegano": "vegano.png",
                 "Senza Lattosio": "lattosio.png",
-                "Biologico": "biologico.png"
             };
             
             const data = json.table.rows.map(row => row.c.map(cell => cell ? cell.v : ""));
