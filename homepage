@@ -94,7 +94,7 @@
         }
         
         async function loadMenu() {
-            const sheetId = "YOUR_SHEET_ID";
+            const sheetId = "1xlGvcFbzDk42KE8o-QqtTiIRl8juiAEDx8AikxOr_cg";
             const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
             const response = await fetch(url);
             const text = await response.text();
