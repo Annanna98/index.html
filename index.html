@@ -91,6 +91,7 @@
         .icons img {
             width: 30px;
             height: 30px;
+            cursor: pointer;
         }
         .modal {
             display: none;
@@ -182,7 +183,7 @@
                 const itemDiv = document.createElement("div");
                 itemDiv.classList.add("menu-item");
                 
-                let iconImages = icons ? icons.split(",").map(icon => `<img src="${iconMapping[icon.trim()]}" alt="${icon.trim()}">`).join(" ") : "";
+                let iconImages = icons ? icons.split(",").map(icon => `<img src="${iconMapping[icon.trim()]}" alt="${icon.trim()}" onclick="openModal()">`).join(" ") : "";
                 
                 itemDiv.innerHTML = `
                     <img src="${image}" alt="${name}">
@@ -190,7 +191,7 @@
                         <p class="menu-item-title">${name}</p>
                         <p class="menu-item-description">${description}</p>
                         <p class="menu-item-price">€${price}</p>
-                        <div class="icons" onclick="openModal()">
+                        <div class="icons">
                             ${iconImages}
                         </div>
                     </div>
@@ -204,5 +205,24 @@
 <body>
     <header>Menù Digitale</header>
     <div class="menu-container"></div>
+
+    <!-- Modale per la legenda delle caratteristiche -->
+    <div id="iconModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Legenda Caratteristiche</h2>
+            <p>Scopri il significato delle nostre icone</p>
+            <ul>
+                <li><img src="surgelati.png" width="30"> Contiene alimenti Surgelati</li>
+                <li><img src="glutine.png" width="30"> Prodotto senza Glutine</li>
+                <li><img src="abbattuti.png" width="30"> Contiene alimenti Abbattuti</li>
+                <li><img src="piccante.png" width="30"> Prodotto Piccante</li>
+                <li><img src="vegetariano.png" width="30"> Prodotto Vegetariano</li>
+                <li><img src="vegano.png" width="30"> Prodotto Vegano</li>
+                <li><img src="lattosio.png" width="30"> Prodotto senza Lattosio</li>
+                <li><img src="biologico.png" width="30"> Prodotto Biologico</li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
