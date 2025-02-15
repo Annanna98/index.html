@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menù Digitale</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+        }
+        header {
+            background-color: #e63946;
+            color: white;
+            padding: 15px;
+            font-size: 22px;
+        }
+        .menu-container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .menu-section {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: #1e1e1e;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .menu-section:hover {
+            background-color: #e63946;
+        }
+        .menu-section img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            margin-right: 15px;
+        }
+        .menu-section h2 {
+            flex: 1;
+            color: white;
+            margin: 0;
+            text-align: left;
+        }
+        .menu-items {
+            display: none;
+            padding: 10px;
+        }
+        .menu-item {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .menu-item img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .menu-item-content {
+            padding: 10px;
+        }
+        .menu-item-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .menu-item-description {
+            font-size: 14px;
+            color: #ccc;
+            margin-top: 5px;
+        }
+        .menu-item-price {
+            font-size: 18px;
+            color: #e63946;
+            font-weight: bold;
+            text-align: right;
+        }
+    </style>
+    <script>
+        function toggleMenu(section) {
+            let menu = document.getElementById(section);
+            if (menu.style.display === "none" || menu.style.display === "") {
+                menu.style.display = "block";
+            } else {
+                menu.style.display = "none";
+            }
+        }
+        
+        async function loadMenu() {
+            const sheetId = "YOUR_SHEET_ID";
+            const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+            const response = await fetch(url);
+            const text = await response.text();
+            const json = JSON.parse(text.substring(47, text.length - 2));
+            
+            const data = json.table.rows.map(row => row.c.map(cell => cell ? cell.v : ""));
+            
+            const menuContainer = document.querySelector(".menu-container");
+            menuContainer.innerHTML = "";
+            
+            let currentCategory = "";
+            let menuItemsContainer;
+            
+            data.forEach(row => {
+                let [category, name, description, price, image] = row;
+                
+                if (category && category !== currentCategory) {
+                    currentCategory = category;
+                    const sectionDiv = document.createElement("div");
+                    sectionDiv.classList.add("menu-section");
+                    sectionDiv.setAttribute("onclick", `toggleMenu('${category}')`);
+                    sectionDiv.innerHTML = `<img src="${image}" alt="${category}"><h2>${category}</h2>`;
+                    menuContainer.appendChild(sectionDiv);
+                    
+                    menuItemsContainer = document.createElement("div");
+                    menuItemsContainer.classList.add("menu-items");
+                    menuItemsContainer.id = category;
+                    menuContainer.appendChild(menuItemsContainer);
+                }
+                
+                const itemDiv = document.createElement("div");
+                itemDiv.classList.add("menu-item");
+                itemDiv.innerHTML = `
+                    <img src="${image}" alt="${name}">
+                    <div class="menu-item-content">
+                        <p class="menu-item-title">${name}</p>
+                        <p class="menu-item-description">${description}</p>
+                        <p class="menu-item-price">€${price}</p>
+                    </div>
+                `;
+                menuItemsContainer.appendChild(itemDiv);
+            });
+        }
+        window.onload = loadMenu;
+    </script>
+</head>
+<body>
+
+    <header>Menù Digitale</header>
+    <div class="menu-container"></div>
+
+</body>
+</html>
