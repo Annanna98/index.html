@@ -110,6 +110,17 @@
             const text = await response.text();
             const json = JSON.parse(text.substring(47, text.length - 2));
             
+            const iconMapping = {
+                "Surgelati": "https://annanna98.github.io/menu/surgelati.png",
+                "Senza Glutine": "https://annanna98.github.io/menu/glutine.png",
+                "Abbattuti": "https://annanna98.github.io/menu/abbattuti.png",
+                "Piccante": "https://annanna98.github.io/menu/piccante.png",
+                "Vegetariano": "https://annanna98.github.io/menu/vegetariano.png",
+                "Vegano": "https://annanna98.github.io/menu/vegano.png",
+                "Senza Lattosio": "https://annanna98.github.io/menu/lattosio.png",
+                "Biologico": "https://annanna98.github.io/menu/biologico.png"
+            };
+            
             const data = json.table.rows.map(row => row.c.map(cell => cell ? cell.v : ""));
             
             const menuContainer = document.querySelector(".menu-container");
@@ -137,13 +148,24 @@
                 
                 const itemDiv = document.createElement("div");
                 itemDiv.classList.add("menu-item");
+                
+                let iconImages = "";
+                if (icons && icons.trim() !== "") {
+                    icons.split(",").forEach(icon => {
+                        icon = icon.trim();
+                        if (iconMapping[icon]) {
+                            iconImages += `<img src="${iconMapping[icon]}" alt="${icon}"> `;
+                        }
+                    });
+                }
+                
                 itemDiv.innerHTML = `
                     <img src="${image}" alt="${name}">
                     <div class="menu-item-content">
                         <p class="menu-item-title">${name}</p>
                         <p class="menu-item-description">${description}</p>
                         <p class="menu-item-price">€${price}</p>
-                        <div class="icons">${icons}</div>
+                        ${iconImages ? `<div class="icons">${iconImages}</div>` : ""}
                     </div>
                 `;
                 menuItemsContainer.appendChild(itemDiv);
