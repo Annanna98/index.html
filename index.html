@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menù Digitale</title>
+    <title>Menù Digitale!</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -59,7 +59,6 @@
             border-radius: 10px;
             margin-bottom: 15px;
             text-align: left;
-            position: relative;
         }
         .menu-item img {
             width: 100%;
@@ -93,92 +92,68 @@
             width: 20px;
             height: 20px;
         }
-        .legend {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-            text-align: left;
-        }
-        .legend h3 {
-            margin: 0 0 10px 0;
-        }
-        .legend ul {
-            list-style: none;
-            padding: 0;
-        }
-        .legend ul li {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        .legend ul li img {
-            margin-right: 10px;
-        }
-        .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-            color: red;
-        }
     </style>
     <script>
-        async function fetchMenu() {
-            const sheetID = "1xlGvcFbzDk42KE8o-QqtTiIRl8juiAEDx8AikxOr_cg";
-            const sheetName = "Menù"; 
-            const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
-
-            try {
-                const response = await fetch(url);
-                const text = await response.text();
-                const json = JSON.parse(text.substr(47).slice(0, -2));
-                const menuContainer = document.querySelector(".menu-container");
-                menuContainer.innerHTML = "";
-
-                json.table.rows.forEach(row => {
-                    const [name, description, price, image, icons] = row.c;
-                    const menuItem = document.createElement("div");
-                    menuItem.classList.add("menu-item");
-                    menuItem.innerHTML = `
-                        <img src="${image.v}" alt="${name.v}">
-                        <div class="menu-item-content">
-                            <div class="menu-item-title">${name.v}</div>
-                            <div class="menu-item-description">${description.v}</div>
-                            <div class="menu-item-price">€${price.v}</div>
-                            <div class="icons">${icons.v}</div>
-                        </div>
-                    `;
-                    menuContainer.appendChild(menuItem);
-                });
-            } catch (error) {
-                console.error("Errore nel recupero dati:", error);
+        function toggleMenu(section) {
+            let menu = document.getElementById(section);
+            if (menu.style.display === "none" || menu.style.display === "") {
+                menu.style.display = "block";
+            } else {
+                menu.style.display = "none";
             }
         }
-        document.addEventListener("DOMContentLoaded", fetchMenu);
+        
+        async function loadMenu() {
+            const sheetId = "1xlGvcFbzDk42KE8o-QqtTiIRl8juiAEDx8AikxOr_cg";
+            const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+            const response = await fetch(url);
+            const text = await response.text();
+            const json = JSON.parse(text.substring(47, text.length - 2));
+            
+            const data = json.table.rows.map(row => row.c.map(cell => cell ? cell.v : ""));
+            
+            const menuContainer = document.querySelector(".menu-container");
+            menuContainer.innerHTML = "";
+            
+            let currentCategory = "";
+            let menuItemsContainer;
+            
+            data.forEach(row => {
+                let [category, name, description, price, image, icons] = row;
+                
+                if (category && category !== currentCategory) {
+                    currentCategory = category;
+                    const sectionDiv = document.createElement("div");
+                    sectionDiv.classList.add("menu-section");
+                    sectionDiv.setAttribute("onclick", `toggleMenu('${category}')`);
+                    sectionDiv.innerHTML = `<img src="${image}" alt="${category}"><h2>${category}</h2>`;
+                    menuContainer.appendChild(sectionDiv);
+                    
+                    menuItemsContainer = document.createElement("div");
+                    menuItemsContainer.classList.add("menu-items");
+                    menuItemsContainer.id = category;
+                    menuContainer.appendChild(menuItemsContainer);
+                }
+                
+                const itemDiv = document.createElement("div");
+                itemDiv.classList.add("menu-item");
+                itemDiv.innerHTML = `
+                    <img src="${image}" alt="${name}">
+                    <div class="menu-item-content">
+                        <p class="menu-item-title">${name}</p>
+                        <p class="menu-item-description">${description}</p>
+                        <p class="menu-item-price">€${price}</p>
+                        <div class="icons">${icons}</div>
+                    </div>
+                `;
+                menuItemsContainer.appendChild(itemDiv);
+            });
+        }
+        window.onload = loadMenu;
     </script>
 </head>
 <body>
     <header>Menù Digitale</header>
     <div class="menu-container"></div>
-    <div class="legend" id="legend">
-        <span class="close-btn" onclick="closeLegend()">X</span>
-        <h3>Legenda Caratteristiche</h3>
-        <ul>
-            <li><img src="surgelati.png" alt="Surgelati"> Contiene alimenti surgelati</li>
-            <li><img src="glutine.png" alt="Senza Glutine"> Prodotto senza Glutine</li>
-            <li><img src="abbattuti.png" alt="Abbattuti"> Contiene alimenti abbattuti</li>
-            <li><img src="piccante.png" alt="Piccante"> Prodotto Piccante</li>
-            <li><img src="vegetariano.png" alt="Vegetariano"> Prodotto Vegetariano</li>
-            <li><img src="vegano.png" alt="Vegano"> Prodotto Vegano</li>
-            <li><img src="lattosio.png" alt="Senza Lattosio"> Prodotto senza Lattosio</li>
-            <li><img src="biologico.png" alt="Biologico"> Prodotto Biologico</li>
-        </ul>
-    </div>
 </body>
 </html>
